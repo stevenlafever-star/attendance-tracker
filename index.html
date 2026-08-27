@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attendance Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <h1>Attendance Tracker <span class="ver" id="ver"></span></h1>
+  <div class="spacer"></div>
+  <div class="dbchip"><span class="dot" id="dbdot"></span><span id="dbname">No database open</span></div>
+  <button class="btn" id="btn-open">Open database…</button>
+  <button class="btn" id="btn-new">New database…</button>
+  <button class="btn" id="btn-save" title="Changes save automatically; this forces a save now">Save</button>
+  <button class="btn" id="btn-tests" title="Run the policy test suite in this browser">Tests</button>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-tab="dash" class="active">Dashboard</button>
+  <button data-tab="exc">Exceptions<span class="count" id="exc-count" hidden></span></button>
+  <button data-tab="log">Discipline Log</button>
+  <button data-tab="imp">Import</button>
+  <button data-tab="codes">Paycodes</button>
+</nav>
+<main>
+  <section class="setup" id="setup">
+    <h2>Open the attendance database</h2>
+    <p>Everything runs in this browser tab. Nothing is uploaded anywhere — the database is a single <span class="mono">.json</span> file in the shared OneDrive folder (<span class="mono">2 percent/Database/</span>), and this page reads and writes it directly.</p>
+    <div class="row">
+      <button class="btn primary" id="setup-open">Open existing database…</button>
+      <button class="btn" id="setup-new">Create a new database…</button>
+    </div>
+    <div class="note" id="setup-note"></div>
+  </section>
+
+  <section class="panel active" id="tab-dash">
+    <div class="bar">
+      <button class="btn" id="dash-refresh">Refresh</button>
+      <button class="btn" id="dash-export">Export dashboard to Excel</button>
+      <button class="btn" id="dash-audit">Export employee audit</button>
+      <button class="btn" id="dash-edit">Edit record…</button>
+      <span class="sep"></span>
+      <input class="search" type="text" id="dash-search" placeholder="Filter by name or employee #">
+      <span class="hint" id="dash-asof"></span>
+    </div>
+    <div class="tablewrap" id="dash-table"></div>
+  </section>
+
+  <section class="panel" id="tab-exc">
+    <div class="bar">
+      <button class="btn primary" id="exc-issue">Mark issued…</button>
+      <button class="btn" id="exc-waive">Waive…</button>
+      <span class="sep"></span>
+      <button class="btn" id="exc-notice-tardy">Tardy notice</button>
+      <button class="btn" id="exc-notice-att">2% notice</button>
+      <button class="btn" id="exc-templates">Edit templates…</button>
+      <span class="sep"></span>
+      <label for="exc-from">Suggest events on/after</label>
+      <input type="date" id="exc-from">
+      <button class="btn" id="exc-apply">Apply</button>
+      <span class="hint">Discipline that appears due but is not yet in the log</span>
+    </div>
+    <div class="tablewrap" id="exc-table"></div>
+  </section>
+
+  <section class="panel" id="tab-log">
+    <div class="bar">
+      <button class="btn" id="log-add">Add entry manually…</button>
+      <button class="btn" id="log-del">Delete selected</button>
+      <span class="sep"></span>
+      <input class="search" type="text" id="log-search" placeholder="Filter by name or employee #">
+      <span class="hint">History used by the ladder calculations — seed pre-app disciplines here</span>
+    </div>
+    <div class="tablewrap" id="log-table"></div>
+  </section>
+
+  <section class="panel" id="tab-imp">
+    <div class="dropzone" id="drop">
+      <input type="file" id="imp-file" accept=".xlsx,.xlsm,.csv,.tsv,.txt" hidden>
+      <button class="btn primary" id="imp-pick">Import weekly labor report…</button>
+      <div style="margin-top:8px">or drop the file here. Accepts .xlsx / .csv with columns for employee id, date, paycode and hours. Re-importing the same week is safe — rows are replaced, not doubled.</div>
+    </div>
+    <div class="log" id="imp-log"></div>
+  </section>
+
+  <section class="panel" id="tab-codes">
+    <div class="bar">
+      <label>Set category for selected:</label>
+      <button class="btn" data-cat="REG">REG (worked)</button>
+      <button class="btn" data-cat="OT">OT (worked)</button>
+      <button class="btn" data-cat="TARDY">TARDY</button>
+      <button class="btn" data-cat="MISS">MISS</button>
+      <button class="btn" data-cat="X">X (excluded)</button>
+      <span class="hint">New codes from imports arrive as X and are highlighted until reviewed</span>
+    </div>
+    <div class="tablewrap" id="codes-table"></div>
+  </section>
+</main>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast"></div>
+<script src="engine.js"></script>
+<script src="store.js"></script>
+<script src="audit.js"></script>
+<script src="notices.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
