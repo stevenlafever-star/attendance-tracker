@@ -1,5 +1,7 @@
 # Attendance Tracker (web)
 
+**Live site:** https://stevenlafever-star.github.io/attendance-tracker/
+
 Client-side tool that enforces a factory Time & Attendance policy: the rolling **2% rule**
 for unexcused absences and the **tardy discipline ladder**. HR imports the weekly labor
 report, the app computes who is due discipline, HR confirms or waives, and the app
@@ -10,7 +12,7 @@ This repository contains code only — the database is a `.json` file that lives
 company's shared OneDrive folder and is opened directly by the page.
 
 ## Using it
-1. Open the GitHub Pages URL in **Chrome or Edge** (needed for direct file access).
+1. Open https://stevenlafever-star.github.io/attendance-tracker/ in **Chrome or Edge** (needed for direct file access).
 2. **Open database…** and pick `2 percent/Database/attendance.json`
    (or **New database…** the first time). The browser asks permission once per session;
    after that, changes save automatically.
@@ -31,7 +33,7 @@ handbook's worked examples and HR clarifications are encoded in `tests.js`; open
 ## Files
 | File | Purpose |
 |---|---|
-| `index.html`, `style.css`, `app.js` | UI |
+| `index.html`, `style.css`, `app.js`, `ui.js` | UI |
 | `engine.js` | Policy math (pure, no DOM) |
 | `store.js` | JSON data model, weekly-file import, adjustments |
 | `audit.js` | Per-employee audit workbook (SheetJS) |
